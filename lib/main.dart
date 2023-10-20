@@ -1,5 +1,7 @@
 import 'package:bloc_tutorial/bloc/products_bloc.dart';
+import 'package:bloc_tutorial/cubit/users_cubit.dart';
 import 'package:bloc_tutorial/repo/products_repo.dart';
+import 'package:bloc_tutorial/repo/users_repo.dart';
 import 'package:bloc_tutorial/screens/home_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   Bloc.observer = MyBlocObserver();
-  runApp(const MyApp());
+  runApp(MultiRepositoryProvider(
+    providers: [
+      RepositoryProvider(
+        create: (context) => ProductsRepo(),
+      ),
+      RepositoryProvider(
+        create: (context) => UsersRepo(),
+      ),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyBlocObserver extends BlocObserver {
@@ -67,6 +79,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<ProductsBloc>(
           create: (BuildContext context) => ProductsBloc(ProductsRepo()),
+        ),
+        BlocProvider<UsersCubit>(
+          create: (BuildContext context) => UsersCubit(UsersRepo()),
         ),
       ],
       child: const MaterialApp(
